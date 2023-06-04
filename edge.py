@@ -116,7 +116,8 @@ class edge(object):
 
 
     def gradientation(self):
-
+        
+        photo = self.photo
         mag = np.zeros((800,1200),dtype=np.float32)
         ang = np.zeros((800,1200),dtype=np.float32)
         filtered = np.zeros((800,1200),dtype=np.float32)
