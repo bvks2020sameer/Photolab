@@ -8,22 +8,19 @@ int main(){
     int arr[height][width];
     int i,j;
 
-    int midx = width/2;
-    int midy = height/2;
+ 
 
     int sig = 1;
     int r,s = 2*sig*sig;
-    int x,y;
-    cout<<1200;
+    int midx = width/2,midy=height/2;        
     
     for(i=0;i<width;i++){
         for(j=0;j<height;j++){
-                x = i-midx;
-                y = j-midy;
-                r = sqrt(x*x + y*y);
-                arr[i][j] = (1/s*M_1_PI)*exp(r*r/s);
-                //cout<<(arr[i][j]);
+                r = sqrt((i-midx)*(i-midx) + (j-midy)*(j-midy));
+                arr[i][j] = (float)(sqrt(1/(s*3.414)))*(float)exp((double)r/s);
+                cout<<(arr[i][j])<<" ";
                 
         }
+        cout<<'\n';
     }
 }

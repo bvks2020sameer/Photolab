@@ -3,54 +3,40 @@
 import cv2
 import numpy as np
 from random import randint as rd
-import subprocess
-
-#
-from basic_bw import basic_bw
 
 
 
-photo = cv2.imread("""D:\Programs\Photolab\shark.jpg""",0)
+from freq_filter import freq_filter
+
+
+
+photo = cv2.imread("""D:\Programs\Photolab\car.jpg""",0)
 photo = cv2.resize(photo,(1200,800))
 
+cuttoff = 50
+
+B = freq_filter(photo)
+new = B.butter_high_pass(cuttoff,2)
 
 
 
-
-#B = basic_bw(photo)
-#new = B.edge_detect(1.5)
-photo = cv2.medianBlur(photo,5)
-new = cv2.Sobel(photo,cv2.CV_64F,1,1)
-new = cv2.Sobel(new,cv2.CV_64F,1,1)
-
-
-
+color = [6,255,72]
 New = []
-count = 0
-
 for i in new :
-    
-        row = []
-        
-        if count % 150 == 0 :
-                color = [rd(0,255),rd(0,255),rd(0,170)]
-            
-
-        for j in i :
-
-        
+    row = []
+    for j in i :
             if j != 0:
-                key = [color[0],color[1],color[2]]
+                wt = j/255*10
+                key = [int(color[0]*wt),int(color[1]*wt),int(color[2]*wt)]
             else:
-                key = [30,10,0]
+                key = [0,0,0]
 
-                
             row.append(key)
-        
-        New.append(row)
-        count += 1
-        
 
+    New.append(row)
+
+
+        
 New = np.array(New)
         
 

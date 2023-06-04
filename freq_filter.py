@@ -22,8 +22,9 @@ class freq_filter(object):
                 else:
                     H[i,j] = 0
 
-        G = H*freq_dom
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H*freq_dom
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return new
 
@@ -47,8 +48,9 @@ class freq_filter(object):
                 else:
                     H[i,j] = 0
 
-        G = H*freq_dom
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H*freq_dom
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return new
 
@@ -71,8 +73,9 @@ class freq_filter(object):
         FFT = np.fft.fft2(photo)
         FFT = np.fft.fftshift(FFT)
 
-        G = H*FFT
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H * FFT
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return  new
 
@@ -94,8 +97,9 @@ class freq_filter(object):
         FFT = np.fft.fft2(photo)
         FFT = np.fft.fftshift(FFT)
 
-        G = H*FFT
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H * FFT
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return  new
 
@@ -116,8 +120,9 @@ class freq_filter(object):
         FFT = np.fft.fft2(photo)
         FFT = np.fft.fftshift(FFT)
 
-        G = H*FFT
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H * FFT
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return  new
 
@@ -139,8 +144,9 @@ class freq_filter(object):
         FFT = np.fft.fft2(photo)
         FFT = np.fft.fftshift(FFT)
 
-        G = H*FFT
-        new = np.abs(np.fft.irfft2(G))
+        Gshift = H * FFT
+        G = np.fft.ifftshift(Gshift)
+        new = np.abs(np.fft.ifft2(G))
 
         return  new
 

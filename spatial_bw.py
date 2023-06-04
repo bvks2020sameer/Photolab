@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 
-class basic_bw(object):
+class spatial_bw(object):
 
     def __init__(self, photo) -> None:
         self.photo = photo
