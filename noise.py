@@ -1,10 +1,7 @@
 import numpy as np
-import cv2
+import random
 
-photo = cv2.imread('car.jpg')
-photo = cv2.resize(photo,(1200,800))
-
-class spatial_noise(object) :
+class spatial_noise_color(object)  :
 
     def __init__(self,photo) -> None:
           self.photo = photo
@@ -52,6 +49,10 @@ class spatial_noise(object) :
         return new  
 
 
+
+
+
+
 class probabilistic_noise (object):
      
     def __init__(self,photo) -> None:
@@ -61,20 +62,45 @@ class probabilistic_noise (object):
     def gaussian(self,std_dev):
             
             photo = self.photo
+            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
             mean = np.mean(photo)
-            noise = np.zeros((800,1200), np.uint8)
-            cv2.randn(noise, mean, std_dev)
-            noisy_img = cv2.add(photo, noise)
+            noise = np.random.normal(loc=mean,scale=std_dev,size=(800,1200))
+            
+            
+            return photo+noise
+    
+    def uniform(self,a,b):
+            
+            photo = self.photo
+            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
+            mean = np.mean(photo)
+            noise = np.zeros((800,1200),np.float32)
 
-            return noisy_img
-         
+            for i in range(800):
+                  for j in range(1200):
+                        noise[i,j] = random.randrange(a,b+1)     
+            
+            return photo+noise
+    
+    
+    
+    def erlang(self,a,b):
+            
+            photo = self.photo
+            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
+            noise = np.random.gamma(a,b,(800,1200))
+            print(noise)
+            return photo+noise
+
+
+    def exponential(self,a):
+            
+            photo = self.photo
+            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
+            noise = np.random.exponential(a,(800,1200))
+            print(noise)
+            return photo+noise
+            
 
 
 
-New = spatial_noise.salt_pepper(photo,100000)
-
-cv2.imwrite("noise.jpg",New)
-new = cv2.imread("noise.jpg")
-cv2.imshow("frame",new)
-
-cv2.waitKey(0)

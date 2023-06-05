@@ -1,6 +1,12 @@
 import numpy as np
-import math
+from matplotlib import pyplot as plt
 
-a = np.array([[1,0,0],[0,1,0],[0,0,1]])
-b = np.array([[1,1,1],[2,2,2],[3,3,3]])
-print(math.atan(1/0))
+
+def gauss(Range) :
+    gx = 2*np.pi*np.random.rand(Range)
+    gy = np.cos(gx)*np.random.rand(Range)
+    plt.plot(gy)
+    plt.show()
+    return None
+
+gauss(100)
