@@ -100,6 +100,8 @@ class edge(object):
             
         return  new
 
+
+
     def sobel_avg(self):
         
         photo = self.photo
@@ -113,6 +115,7 @@ class edge(object):
                 mag[i,j] = np.sqrt(gx[i,j]**2 + gy[i,j]**2)
 
         return mag    
+
 
 
     def gradientation(self):

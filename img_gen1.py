@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 from random import randint as rd
+from edge import edge
 
 
 
@@ -16,7 +17,9 @@ photo = cv2.resize(photo,(1200,800))
 cuttoff = 50
 
 B = freq_filter(photo)
-new = B.butter_high_pass(cuttoff,2)
+new1 = B.gauss_low_pass(100,5)
+e = edge(new1)
+new = e.sobel_avg()
 
 
 
