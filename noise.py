@@ -63,17 +63,15 @@ class probabilistic_noise (object):
     def gaussian(self,std_dev):
             
             photo = self.photo
-            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
             mean = np.mean(photo)
             noise = np.random.normal(loc=mean,scale=std_dev,size=(800,1200))
-            
-            
             return photo+noise
+    
+
     
     def uniform(self,a,b):
             
             photo = self.photo
-            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
             mean = np.mean(photo)
             noise = np.zeros((800,1200),np.float32)
 
@@ -86,18 +84,14 @@ class probabilistic_noise (object):
     
     
     def erlang(self,a,b):
-            
             photo = self.photo
-            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
             noise = np.random.gamma(a,b,(800,1200))
             print(noise)
             return photo+noise
 
 
     def exponential(self,a):
-            
             photo = self.photo
-            photo = cv2.cvtColor(photo,cv2.COLOR_BGR2GRAY)
             noise = np.random.exponential(a,(800,1200))
             print(noise)
             return photo+noise
