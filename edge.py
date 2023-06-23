@@ -2,17 +2,22 @@ import numpy as np
 
 class edge(object):
 
-    def __init__(self,photo):
+    def __init__(self,photo,M,N):
         self.photo = photo
+        self.M = M
+        self.N = N
         return None
 
     def double_thresholding(self,th1:int,th2:int):
         photo = self.photo
         
-        new = np.zeros((800,1200),dtype= np.float32)
+        M = self.M
+        N = self.N
 
-        for i in range(0,800):
-            for j in range(0,1200):
+        new = np.zeros((M,N),dtype= np.float32)
+
+        for i in range(0,M):
+            for j in range(0,N):
                 if photo[i,j] >= th2:
                     new[i,j] = 255
                 elif photo[i,j] >= th1 and photo[i,j] <= th2 :
@@ -29,21 +34,23 @@ class edge(object):
     def sobelx(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
-        temp = np.zeros((802,1202),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
 
 
         temp[0,:] = 0
         temp[:, 0] = 0
-        temp[801,:] = 0
-        temp[:, 1201] = 0
-        temp[1:801,1:1201] = photo
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo
 
         op = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
         
-        for i in range(1,801):
-            for j in range(1,1201):
+        for i in range(1,M+1):
+            for j in range(1,N+1):
                         
                 kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
                             [temp[i-1,j],temp[i,j],temp[i+1,j]],
@@ -56,10 +63,10 @@ class edge(object):
                         sum += op[x_key,y_key]*kernel[x_key,y_key]
 
                 new[i-1,j-1] = sum
-            
-            
-            
+                        
         return  new
+
+
 
 
 
@@ -68,20 +75,24 @@ class edge(object):
 
         photo = self.photo
 
-        new = np.zeros((800,1200),dtype=np.float32)
-        temp = np.zeros((802,1202),dtype=np.float32)
+        M = self.M
+        N = self.N
+
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
 
 
         temp[0,:] = 0
         temp[:, 0] = 0
-        temp[801,:] = 0
-        temp[:, 1201] = 0
-        temp[1:801,1:1201] = photo
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo       
+       
 
         op = np.array([[1,2,1],[0,0,0],[-1,-2,-1]])
         
-        for i in range(1,801):
-            for j in range(1,1201):
+        for i in range(1,M+1):
+            for j in range(1,N+1):
                 
                 kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
                             [temp[i-1,j],temp[i,j],temp[i+1,j]],
@@ -94,24 +105,25 @@ class edge(object):
                         sum += op[x_key,y_key]*kernel[x_key,y_key]
 
                 new[i-1,j-1] = sum
-            
-                
-            
-            
+                                    
         return  new
+
+
 
 
 
     def sobel_avg(self):
         
         photo = self.photo
-        mag = np.zeros((800,1200),dtype=np.float32)
-        e = edge(photo)
+        M = self.M
+        N = self.N
+        mag = np.zeros((M,N),dtype=np.float32)
+        e = edge(photo,M,N)
         gx = e.sobelx()
         gy = e.sobely()
 
-        for i in range(800):
-            for j in range(1200):
+        for i in range(M):
+            for j in range(N):
                 mag[i,j] = np.sqrt(gx[i,j]**2 + gy[i,j]**2)
 
         return mag    
@@ -121,21 +133,25 @@ class edge(object):
     def gradientation(self):
         
         photo = self.photo
-        mag = np.zeros((800,1200),dtype=np.float32)
-        ang = np.zeros((800,1200),dtype=np.float32)
-        filtered = np.zeros((800,1200),dtype=np.float32)
+        M = self.M
+        N = self.N
+
+        
+        mag = np.zeros((M,N),dtype=np.float32)
+        ang = np.zeros((M,N),dtype=np.float32)
+        filtered = np.zeros((M,N),dtype=np.float32)
         e = edge(photo)
 
         gx = e.sobelx()
         gy = e.sobely()
 
-        for i in range(800):
-            for j in range(1200):
+        for i in range(M):
+            for j in range(N):
                 mag[i,j] = np.sqrt(gx[i,j]**2 + gy[i,j]**2)
                 ang[i,j] = np.arctan2(gy[i,j],gx[i,j])
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
                 
                 if ang[i,j] < np.pi/8 :
                     n1 = mag[i-1,j]

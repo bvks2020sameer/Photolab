@@ -26,24 +26,27 @@ class img_restore(object):
 
 
 
-    def __init__(self,photo) -> None:
+    def __init__(self,photo,M,N) -> None:
         
         self.photo = photo
-
-
+        self.M = M
+        self.N = N
+        return None
 
     def median(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -59,15 +62,17 @@ class img_restore(object):
     def mean(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -82,15 +87,17 @@ class img_restore(object):
     def geo_mean(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -104,15 +111,17 @@ class img_restore(object):
     def har_mean(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -126,15 +135,17 @@ class img_restore(object):
     def contra_har_mean(self,Q):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -148,15 +159,17 @@ class img_restore(object):
     def min(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -170,15 +183,17 @@ class img_restore(object):
     def max(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float32)
+        new = np.zeros((M,N),dtype=np.float32)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -192,15 +207,17 @@ class img_restore(object):
     def mid_point(self):
 
         photo = self.photo
+        M = self.M
+        N = self.N
 
-        new = np.zeros((800,1200),dtype=np.float64)
+        new = np.zeros((M,N),dtype=np.float64)
         new[0,:] = photo[0,:]
-        new[799,:] = photo[799,:]
+        new[M-1,:] = photo[M-1,:]
         new[:,0] = photo[:,0]
-        new[:,1199] = photo[:,1199]
+        new[:,N-1] = photo[:,N-1]
 
-        for i in range(1,799):
-            for j in range(1,1199):
+        for i in range(1,M-1):
+            for j in range(1,N-1):
 
                 kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
                                 [photo[i-1,j],photo[i,j],photo[i+1,j]],
@@ -210,7 +227,7 @@ class img_restore(object):
         return new
 
 
-new = img_restore(photo).har_mean()
+new = img_restore(photo,800,1200).har_mean()
 
 cv2.imwrite("new.jpg",new)
 disp = cv2.imread("new.jpg")

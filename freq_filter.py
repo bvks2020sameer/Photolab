@@ -2,21 +2,25 @@ import numpy as np
 
 class freq_filter(object):
 
-    def __init__(self,photo) -> None:
+    def __init__(self,photo,M,N) -> None:
         self.photo = photo
+        self.M = M
+        self.N = N
 
 
     def ideal_low_pass(self, cuttoff: int):
 
         photo = self.photo
+        M = self.M
+        N = self.N
         freq_dom = np.fft.fft2(photo)
         freq_dom = np.fft.fftshift(freq_dom)
 
-        H = np.zeros((800,1200),dtype= np.float32 )
-        for i in range(800):
+        H = np.zeros((M,N),dtype= np.float32 )
+        for i in range(M):
 
-            for j in range(1200):
-                D = np.sqrt((i-400)**2 + (j-600)**2)
+            for j in range(N):
+                D = np.sqrt((i-M/2)**2 + (j-N/2)**2)
                 if D <= cuttoff:
                     H[i,j] = 1
                 else:
@@ -35,14 +39,16 @@ class freq_filter(object):
     def ideal_high_pass(self, cuttoff: int):
 
         photo = self.photo
+        M = self.M
+        N = self.N
         freq_dom = np.fft.fft2(photo)
         freq_dom = np.fft.fftshift(freq_dom)
 
-        H = np.zeros((800,1200),dtype= np.float32)
-        for i in range(800):
+        H = np.zeros((M,N),dtype= np.float32)
+        for i in range(M):
 
-            for j in range(1200):
-                D = np.sqrt((i-400)**2 + (j-600)**2)
+            for j in range(N):
+                D = np.sqrt((i-M/2)**2 + (j-N/2)**2)
                 if D >= cuttoff:
                     H[i,j] = 1
                 else:
@@ -61,11 +67,14 @@ class freq_filter(object):
     def butter_low_pass(self,cuttoff: int,n:int) :
 
         photo = self.photo
-        H = np.zeros((800,1200),dtype= np.float32)
-        for i in range(0, 800):
-            for j in range(0, 1200):
-                if((np.sqrt((i-400)**2 + (j-600)**2)) != 0 ):
-                    key = (np.sqrt((i-400)**2 + (j-600)**2))
+        M = self.M
+        N = self.N
+
+        H = np.zeros((M,N),dtype= np.float32)
+        for i in range(0, M):
+            for j in range(0, N):
+                if((np.sqrt((i-M/2)**2 + (j-N/2)**2)) != 0 ):
+                    key = (np.sqrt((i-M/2)**2 + (j-N/2)**2))
                 else :
                     key = 1;
                 H[i,j] = 1/(1+(key/cuttoff)**n)
@@ -85,11 +94,14 @@ class freq_filter(object):
     def butter_high_pass(self,cuttoff: int,n:int) :
 
         photo = self.photo
-        H = np.zeros((800,1200),dtype= np.float32)
-        for i in range(0, 800):
-            for j in range(0, 1200):
-                if((np.sqrt((i-400)**2 + (j-600)**2)) != 0 ):
-                    key = (np.sqrt((i-400)**2 + (j-600)**2))
+        M = self.M
+        N = self.N
+
+        H = np.zeros((M,N),dtype= np.float32)
+        for i in range(0, M):
+            for j in range(0, N):
+                if((np.sqrt((i-M/2)**2 + (j-N/2)**2)) != 0 ):
+                    key = (np.sqrt((i-M/2)**2 + (j-N/2)**2))
                 else :
                     key = 1;
                 H[i,j] = 1/(1+(cuttoff/key)**n)
@@ -108,12 +120,15 @@ class freq_filter(object):
     def gauss_low_pass(self,cuttoff: int,sigma:int) :
 
         photo = self.photo
-        H = np.zeros((800,1200),dtype= np.float32)
+        M = self.M
+        N = self.N
+
+        H = np.zeros((M,N),dtype= np.float32)
 
         s = 2*sigma*sigma
-        for i in range(0, 800):
-            for j in range(0, 1200):
-                key = (np.sqrt((i-400)**2 + (j-600)**2))
+        for i in range(0, M):
+            for j in range(0, N):
+                key = (np.sqrt((i-M/2)**2 + (j-N/2)**2))
 
                 H[i,j] = np.exp((-key)/s)
 
@@ -132,12 +147,15 @@ class freq_filter(object):
     def gauss_high_pass(self,cuttoff: int,sigma:int) :
 
         photo = self.photo
-        H = np.zeros((800,1200),dtype= np.float32)
+        M = self.M
+        N = self.N
+
+        H = np.zeros((M,N),dtype= np.float32)
 
         s = 2*sigma*sigma
-        for i in range(0, 800):
-            for j in range(0, 1200):
-                key = (np.sqrt((i-400)**2 + (j-600)**2))
+        for i in range(0, M):
+            for j in range(0, N):
+                key = (np.sqrt((i-M/2)**2 + (j-N/2)**2))
 
                 H[i,j] = 1 - np.exp((-key)/s)
 
