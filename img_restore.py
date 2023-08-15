@@ -107,31 +107,6 @@ class img_restore(object):
         return new
 
 
-    #not working
-    def har_mean(self):
-
-        photo = self.photo
-        M = self.M
-        N = self.N
-
-        new = np.zeros((M,N),dtype=np.float32)
-        new[0,:] = photo[0,:]
-        new[M-1,:] = photo[M-1,:]
-        new[:,0] = photo[:,0]
-        new[:,N-1] = photo[:,N-1]
-
-        for i in range(1,M-1):
-            for j in range(1,N-1):
-
-                kernel = np.array([[photo[i-1,j-1],photo[i,j-1],photo[i+1,j-1]],
-                                [photo[i-1,j],photo[i,j],photo[i+1,j]],
-                                [photo[i-1,j+1],photo[i,j+1],photo[i+1,j+1]]])
-                new[i,j] = h_mean(kernel)
-        
-        return new
-
-
-
     def contra_har_mean(self,Q):
 
         photo = self.photo
