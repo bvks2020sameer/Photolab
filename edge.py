@@ -348,17 +348,3 @@ class edge(object):
     
 
 
-import cv2
-
-photo = cv2.imread("black1.jpg",0)
-photo = cv2.resize(photo,(1200,800))
-
-e = edge(photo,800,1200)
-
-new = e.prewits_vertical()
-
-cv2.imwrite("edge.jpg",new)
-
-disp = cv2.imread("edge.jpg")
-cv2.imshow("frame",disp)
-cv2.waitKey()
