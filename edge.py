@@ -204,6 +204,161 @@ class edge(object):
         return filtered
 
 
+    def prewits_horizontal(self):
+
+        photo = self.photo
+        M = self.M
+        N = self.N
+
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
 
 
+        temp[0,:] = 0
+        temp[:, 0] = 0
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo
 
+        op = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
+        
+        for i in range(1,M+1):
+            for j in range(1,N+1):
+                        
+                kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
+                            [temp[i-1,j],temp[i,j],temp[i+1,j]],
+                            [temp[i-1,j+1],temp[i,j+1],temp[i+1,j+1]]])
+                
+                sum = 0
+
+                for x_key in range(3):
+                    for y_key in range(3) :
+                        sum += op[x_key,y_key]*kernel[x_key,y_key]
+
+                new[i-1,j-1] = sum
+                        
+        return  new
+
+    def prewits_vertical(self):
+
+        photo = self.photo
+        M = self.M
+        N = self.N
+
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
+
+
+        temp[0,:] = 0
+        temp[:, 0] = 0
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo
+
+        op = np.array([[-1,-1,-1],[0,0,0],[1,1,1]])
+        
+        for i in range(1,M+1):
+            for j in range(1,N+1):
+                        
+                kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
+                            [temp[i-1,j],temp[i,j],temp[i+1,j]],
+                            [temp[i-1,j+1],temp[i,j+1],temp[i+1,j+1]]])
+                
+                sum = 0
+
+                for x_key in range(3):
+                    for y_key in range(3) :
+                        sum += op[x_key,y_key]*kernel[x_key,y_key]
+
+                new[i-1,j-1] = sum
+                        
+        return  new
+
+
+    def roberts45(self):
+
+        photo = self.photo
+        M = self.M
+        N = self.N
+
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
+
+
+        temp[0,:] = 0
+        temp[:, 0] = 0
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo
+
+        op = np.array([[-1,0,],[0,1]])
+        
+        for i in range(1,M+1):
+            for j in range(1,N+1):
+                        
+                kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
+                            [temp[i-1,j],temp[i,j],temp[i+1,j]],
+                            [temp[i-1,j+1],temp[i,j+1],temp[i+1,j+1]]])
+                
+                sum = 0
+
+                for x_key in range(2):
+                    for y_key in range(2) :
+                        sum += op[x_key,y_key]*kernel[x_key,y_key]
+
+                new[i-1,j-1] = sum
+                        
+        return  new
+
+
+    def roberts135(self):
+
+        photo = self.photo
+        M = self.M
+        N = self.N
+
+        new = np.zeros((M,N),dtype=np.float32)
+        temp = np.zeros((M+2,N+2),dtype=np.float32)
+
+
+        temp[0,:] = 0
+        temp[:, 0] = 0
+        temp[M+1,:] = 0
+        temp[:, N+1] = 0
+        temp[1:M+1,1:N+1] = photo
+
+        op = np.array([[1,0,],[0,-1]])
+        
+        for i in range(1,M+1):
+            for j in range(1,N+1):
+                        
+                kernel = np.array([[temp[i-1,j-1],temp[i,j-1],temp[i+1,j-1]],
+                            [temp[i-1,j],temp[i,j],temp[i+1,j]],
+                            [temp[i-1,j+1],temp[i,j+1],temp[i+1,j+1]]])
+                
+                sum = 0
+
+                for x_key in range(2):
+                    for y_key in range(2) :
+                        sum += op[x_key,y_key]*kernel[x_key,y_key]
+
+                new[i-1,j-1] = sum
+                        
+        return  new
+    
+
+
+import cv2
+
+photo = cv2.imread("black1.jpg",0)
+photo = cv2.resize(photo,(1200,800))
+
+e = edge(photo,800,1200)
+
+new = e.prewits_vertical()
+
+cv2.imwrite("edge.jpg",new)
+
+disp = cv2.imread("edge.jpg")
+cv2.imshow("frame",disp)
+cv2.waitKey()
