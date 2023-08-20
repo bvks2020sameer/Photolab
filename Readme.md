@@ -15,4 +15,6 @@ categories
   
 ### Download Photolab Framework Today by *pip install photolab*
 ### PyPi : [Click Here](https://pypi.org/project/photolab/)
+### Github Wikis : [Click Here](https://github.com/bvks2020sameer/Photolab/wiki)
 ### 📧 sameer2020bvks@gmail.com
+
