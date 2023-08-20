@@ -140,7 +140,7 @@ class edge(object):
         mag = np.zeros((M,N),dtype=np.float32)
         ang = np.zeros((M,N),dtype=np.float32)
         filtered = np.zeros((M,N),dtype=np.float32)
-        e = edge(photo)
+        e = edge(photo,M,N)
 
         gx = e.sobelx()
         gy = e.sobely()
