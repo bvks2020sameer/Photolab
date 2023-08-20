@@ -12,7 +12,7 @@ categories
 * Spatial Image Operations
 * Image Noise
 * Image Restoration
-* 
+  
 ### Download Photolab Framework Today by *pip install photolab*
 ### PyPi : [Click Here](https://pypi.org/project/photolab/)
 ### 📧 sameer2020bvks@gmail.com
