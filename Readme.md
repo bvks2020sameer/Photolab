@@ -6,11 +6,11 @@
 Project Photolab consists of algorithms classified into 6
 categories 
 
-Edge Detection
-Frequency Filtering
-Spatial Image Operations
-Image Noise
-Image Restoration
+* Edge Detection
+* Frequency Filtering
+* Spatial Image Operations
+* Image Noise
+* Image Restoration
 
 
 These algorithms help one to perform operations like image pre-processing, image restorations, edge detection, 
