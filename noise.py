@@ -95,7 +95,11 @@ class probabilistic_noise (object):
             noise = np.random.exponential(a,(800,1200))
             print(noise)
             return photo+noise
-            
 
+    def poisson(self):
+            photo = self.photo
+            noise = np.random.poisson(lam=np.mean(photo), size=(800,1200))
+            print(noise)
+            return photo + noise
 
 
