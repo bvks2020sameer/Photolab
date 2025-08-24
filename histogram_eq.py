@@ -1,15 +1,6 @@
 import cv2
 import numpy as np
 
-# Correct way to read the image
-img = cv2.imread(r"D:\Programs\Projects\Photolab\fish.png", cv2.IMREAD_GRAYSCALE)
-img = cv2.resize(img, (1080, 720))
-
-
-# cv2.imshow("Car Image", img)
-
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
 
 class histo_eq(object):
 
@@ -21,9 +12,7 @@ class histo_eq(object):
     
     # Pixel Frequency Counter
 
-    def __pix_freq(self) -> dict:
-        
-        photo = self.photo
+    def __pix_freq(self,photo) -> dict:
         arr = photo.flatten()
         pix_freq_dist = dict()
         
@@ -52,7 +41,7 @@ class histo_eq(object):
 
         new = np.zeros((M,N),dtype=np.uint8)
 
-        pix_freq_dist = self.__pix_freq()
+        pix_freq_dist = self.__pix_freq(photo)
         
         #Cummulative frequency and mapping
 
@@ -77,80 +66,122 @@ class histo_eq(object):
 
         return new
     
-    # Local histogram equalization
+    # Pixel frequency redistributer for CLAHE
 
-    def local_hist_eq(self, kernel_size):
+    def __pix_freq_redritibuter(self,pix_freq_dist:dict,threshold:int,reiteration:int = 0) -> dict:
+        if max(list(pix_freq_dist.values())) > threshold:
+            pix_sum = 0
 
-        if kernel_size < 100:
-            raise ValueError("Kernel size too low")
+            for i in pix_freq_dist:
+                if pix_freq_dist[i] > threshold :
+                    pix_sum += pix_freq_dist[i] - threshold
+                    pix_freq_dist[i] = threshold
 
+            step_cnt = 0
+
+            for i in pix_freq_dist:
+                if pix_freq_dist[i] < threshold :
+                    step_cnt += 1
+
+            if step_cnt != 0 :
+                pix_avg = pix_sum//step_cnt
+
+                for i in pix_freq_dist:
+                    if pix_freq_dist[i] < threshold :
+                        pix_freq_dist[i] += pix_avg
+                
+                if max(list(pix_freq_dist.values())) <= threshold:
+                    return pix_freq_dist
+                else:
+                    reiteration += 1
+                    if reiteration <5:
+                        return self.__pix_freq_redritibuter(pix_freq_dist,threshold,reiteration)
+                    else:
+                        return pix_freq_dist
+            else :
+                return pix_freq_dist
+        
+        else :
+            return pix_freq_dist
+
+
+    # CLAHE Method for Histogram equalization 
+
+    def CLAHE_eq(self, kernel_size: int, threshold: int = None) -> np.array:
         photo = self.photo
-        M = self.M
-        N = self.N
-
+        M, N = self.M, self.N
         new = np.zeros((M, N), dtype=np.uint8)
 
-        # 🔹 store mappings per tile
-        mappings = {}
+        if threshold is None:
+            pix_freq_tot = self.__pix_freq(photo)
+            avg_freq = np.ceil(np.mean(list(pix_freq_tot.values())))
+            threshold = avg_freq * 2
+    
 
-        for m in range(0, M, kernel_size):
-            for n in range(0, N, kernel_size):
-                kernel = photo[m:min(m+kernel_size, M), n:min(n+kernel_size, N)]
-                height, width = kernel.shape
+        block_maps = {}
 
-                # your existing GHE call
-                kernel_eq = self.global_hist_eq(kernel, height, width)
+        
+        for i in range(M // kernel_size ):
+            for j in range(N // kernel_size ):
+                row_start, row_end = i * kernel_size, min((i + 1) * kernel_size, M)
+                col_start, col_end = j * kernel_size, min((j + 1) * kernel_size, N)
+                kernel = photo[row_start:row_end, col_start:col_end]
 
-                # 🔹 build mapping for this tile
-                mapping = {}
-                for orig, eq in zip(kernel.flatten(), kernel_eq.flatten()):
-                    mapping[orig] = eq
+                pix_freq_dist = self.__pix_freq(kernel)
+                pix_freq_dist = self.__pix_freq_redritibuter(pix_freq_dist, threshold)
 
-                mappings[(m//kernel_size, n//kernel_size)] = mapping
+                sorted_keys = sorted(pix_freq_dist.keys())
+                cdf = {}
+                cumulative = 0
+                for k in sorted_keys:
+                    cumulative += pix_freq_dist[k]
+                    cdf[k] = cumulative
 
-                # (don’t copy kernel back here — we’ll interpolate later)
+                min_cdf = min(v for v in cdf.values() if v > 0)
+                total = kernel.size
+                remapped = {}
+                for k in sorted_keys:
+                    remapped[k] = np.uint8(
+                        np.ceil((cdf[k] - min_cdf) / (total - min_cdf + 0.1) * 255)
+                    )
 
-        # 🔹 now interpolate for each pixel
-        n_tiles_y = (M + kernel_size - 1) // kernel_size
-        n_tiles_x = (N + kernel_size - 1) // kernel_size
+                block_maps[(i, j)] = remapped
 
+        
         for i in range(M):
             for j in range(N):
-                ty, tx = i // kernel_size, j // kernel_size
-                dy = (i % kernel_size) / kernel_size
-                dx = (j % kernel_size) / kernel_size
+                bi, bj = i // kernel_size, j // kernel_size
+                di, dj = (i % kernel_size) / kernel_size, (j % kernel_size) / kernel_size
 
-                ty1 = min(ty, n_tiles_y-1)
-                tx1 = min(tx, n_tiles_x-1)
-                ty2 = min(ty+1, n_tiles_y-1)
-                tx2 = min(tx+1, n_tiles_x-1)
+                intensity = photo[i, j]
 
-                val = photo[i, j]
+                
+                maps = []
+                for ii in [bi, bi + 1]:
+                    for jj in [bj, bj + 1]:
+                        if (ii, jj) in block_maps:
+                            maps.append(block_maps[(ii, jj)].get(intensity, intensity))
+                        else:
+                            maps.append(intensity)
 
-                # get mapped values from 4 neighboring tiles
-                q11 = mappings[(ty1, tx1)].get(val, val)
-                q21 = mappings[(ty1, tx2)].get(val, val)
-                q12 = mappings[(ty2, tx1)].get(val, val)
-                q22 = mappings[(ty2, tx2)].get(val, val)
+                
+                top = (1 - dj) * maps[0] + dj * maps[1]
+                bottom = (1 - dj) * maps[2] + dj * maps[3]
+                value = (1 - di) * top + di * bottom
 
-                # bilinear interpolation
-                new_val = (
-                    (1-dx)*(1-dy)*q11 +
-                    dx*(1-dy)*q21 +
-                    (1-dx)*dy*q12 +
-                    dx*dy*q22
-                )
-                new[i, j] = round(new_val)
+                new[i, j] = np.uint8(value)
 
         return new
     
 
-    def bi_hist_eq(self,mean_median_flag:str):
+    # Bi-Histogram Equalization method
+
+    def bi_hist_eq(self,mean_median_flag:str) -> np.array:
         
         photo = self.photo
         M = self.M
         N = self.N
-        pix_freq_dist = self.__pix_freq()
+        pix_freq_dist = self.__pix_freq(photo)
         new = np.zeros((M,N),np.uint8)
 
         freqs = list(pix_freq_dist.keys())
@@ -203,17 +234,3 @@ class histo_eq(object):
 
     
     
-   
-
-
-e = histo_eq(img,720,1080)
-
-# img = e.global_hist_eq()
-# print(img)
-
-img = e.bi_hist_eq('mean')
-
-cv2.imshow("Car Image", img)
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
