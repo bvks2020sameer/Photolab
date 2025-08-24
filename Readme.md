@@ -4,7 +4,7 @@
  creating custom artificial neural networks, etc along with non-machine learning-based image processing approaches to a given problem. 
  It is wholly built on numpy for faster execution.   
 
-Project Photolab consists of algorithms classified into 5
+Project Photolab consists of algorithms classified into following
 categories 
 
 * Edge Detection
@@ -12,9 +12,9 @@ categories
 * Spatial Image Operations
 * Image Noise
 * Image Restoration
+* Histogram Equalization
   
-### Download Photolab Framework Today by *pip install photolab*
-### PyPi : [Click Here](https://pypi.org/project/photolab/)
 ### Github Wikis : [Click Here](https://github.com/bvks2020sameer/Photolab/wiki)
 ### 📧 sameer2020bvks@gmail.com
+
 
